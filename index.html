@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<!-- saved from url=(0056)https://intoli.com/blog/scrape-infinite-scroll/demo.html -->
+<html lang="en">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+
+    <title>Partial Extraction Demo</title>
+
+    <style>
+      html,
+      body {
+        height: 100%;
+      }
+
+      body {
+        font-family: "arial";
+      }
+
+      div.box,
+      span,
+      article,
+      section {
+        display: block;
+        margin: 10px 0;
+        padding: 10px 0;
+        text-align: center;
+        background: #c7f5ff;
+        border-radius: 5px;
+        min-height: 54px;
+      }
+
+      #details {
+        padding: 10px;
+        width: 45%;
+        float: right;
+      }
+      
+      #expectation {
+        border: 1px solid red;
+      }
+
+      #boxes {
+        width: 50%;
+        float: left;
+      }
+
+      #boxes i {
+        font-size: small;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="boxes">Given the following input elements:</div>
+    <div id="details">
+      The output should look like to this:
+      <pre id="expectation"></pre>
+    </div>
+    <script>
+      var lastId = 0;
+      let expectedOutput = [];
+      async function loadMore(n) {
+        var container = document.querySelector("#boxes");
+        for (var i = 0; i < n; i++) {
+          lastId += 1;
+
+          const possibleTag = ["div", "span", "section", "article"];
+          const choosenTag =
+            possibleTag[Math.floor(Math.random() * possibleTag.length)];
+
+          var box = document.createElement(choosenTag);
+
+          const randomData = {
+            title: Math.random() >= 0.2 && `Title ${window.lastId}`,
+            subtitle: Math.random() >= 0.2 && `Subtitle ${window.lastId}`
+          };
+
+          box.innerHTML += `<i>${choosenTag}</i>`;
+
+          if (randomData.title) {
+            box.innerHTML += `<div class="title">${randomData.title}</div>`;
+          }
+          if (randomData.subtitle) {
+            box.innerHTML += `<div class="subtitle">${
+              randomData.subtitle
+            }</div>`;
+          }
+
+          expectedOutput.push({
+            title: randomData.title || "",
+            subtitle: randomData.subtitle || ""
+          });
+
+          if (choosenTag === "div") box.classList.add("box");
+          container.appendChild(box);
+        }
+      }
+
+      document.addEventListener("DOMContentLoaded", async () => {
+        await loadMore(10);
+        document.querySelector("#expectation").innerHTML = JSON.stringify(
+          expectedOutput,
+          true,
+          2
+        );
+      });
+    </script>
+  </body>
+</html>
